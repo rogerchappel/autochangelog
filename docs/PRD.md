@@ -1,6 +1,6 @@
 # AutoChangelog PRD
 
-Status: in-progress
+Status: MVP implemented
 
 ## Summary
 
@@ -34,6 +34,20 @@ Writing changelogs manually is tedious and often forgotten. Many projects use `c
 - Publishing to npm/GitHub Releases (output only; pipes to other tools)
 - Commit linting (use commitlint or similar)
 - Rewriting git history
+
+## MVP Scope
+
+The initial public build ships:
+
+- local git log parsing with conventional commit extraction
+- type and scope grouping
+- breaking change detection from `!`, `BREAKING CHANGE:`, and
+  `BREAKING-CHANGE:` markers
+- semver bump suggestions
+- Markdown, JSON, and template output
+- `--from`, `--to`, `--since-last-tag`, `--scope`, `--template`, `--format`,
+  and `--prerelease` flags
+- fixture-backed unit and CLI tests
 
 ## Source attribution
 

@@ -1,0 +1,58 @@
+{
+  "name": "autochangelog",
+  "version": "0.1.0",
+  "description": "Local-first TypeScript CLI that generates changelogs from conventional commits.",
+  "type": "module",
+  "bin": {
+    "autochangelog": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "docs/README.md",
+    "docs/PRD.md",
+    "docs/TASKS.md",
+    "docs/ORCHESTRATION.md",
+    "docs/orchestration.json",
+    "fixtures/templates",
+    "CHANGELOG.md",
+    "README.md",
+    "RELEASE_NOTES.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "smoke": "npm run build && node dist/cli.js --help",
+    "package:smoke": "npm pack --dry-run",
+    "release:check": "npm run check && npm test && npm run build && npm run smoke && npm run package:smoke"
+  },
+  "keywords": [
+    "changelog",
+    "conventional-commits",
+    "release-notes",
+    "semver",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/autochangelog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/autochangelog/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/autochangelog#readme",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^14.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.14"
+  }
+}
