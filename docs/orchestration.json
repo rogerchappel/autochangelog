@@ -1,0 +1,25 @@
+{
+  "project": "autochangelog",
+  "status": "release-candidate",
+  "defaultBranch": "main",
+  "releaseCheck": "npm run release:check",
+  "commands": [
+    "autochangelog",
+    "autochangelog --since-last-tag",
+    "autochangelog --from v1.2.0 --to HEAD --format json",
+    "autochangelog --scope packages/api",
+    "autochangelog --template fixtures/templates/release.md"
+  ],
+  "safety": {
+    "gitMutation": false,
+    "publishing": false,
+    "network": "none for core operation"
+  },
+  "releaseGate": [
+    "npm run check",
+    "npm test",
+    "npm run build",
+    "npm run smoke",
+    "npm pack --dry-run"
+  ]
+}

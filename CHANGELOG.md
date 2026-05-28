@@ -9,31 +9,15 @@ format and uses semantic versioning when versioned releases are published.
 
 ### Added
 
-- Initial release planning, roadmap, and release-process documentation.
-- Template validation script and documentation for local repository hygiene
-  checks.
-- Example generated repository shapes for minimal libraries, CLI tooling, and
-  docs-only projects.
-- Optional generated repository README template.
-- Reusable agent prompt library for common OSS maintenance tasks.
-
-### Changed
-
-- Aligned template terminology, placeholder documentation, and current V1
-  surface area across docs, templates, and workflows.
-- Expanded the optional docs-site template with clearer setup guidance and a
-  contributing starter page.
-- Expanded template inventory checks and directory documentation to include the
-  generated repository README template.
-- Tightened template file validation and aligned generated workflow action
-  versions.
+- Local conventional-commit changelog generator CLI.
+- Markdown and JSON report output.
+- Semver bump suggestion logic.
+- Template rendering support.
+- Fixture-backed Vitest coverage.
 
 ## Release Links
 
 - Unreleased:
-  `https://github.com/OWNER/REPOSITORY/compare/vLAST...HEAD`
+  `https://github.com/rogerchappel/autochangelog/compare/...HEAD`
 - Latest release:
-  `https://github.com/OWNER/REPOSITORY/releases/latest`
-
-Replace `OWNER`, `REPOSITORY`, and `vLAST` after generating a project from this
-template.
+  `https://github.com/rogerchappel/autochangelog/releases/latest`

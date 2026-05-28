@@ -8,14 +8,24 @@
   },
   "files": [
     "dist",
+    "docs/README.md",
+    "docs/PRD.md",
+    "docs/TASKS.md",
+    "docs/ORCHESTRATION.md",
+    "docs/orchestration.json",
+    "fixtures/templates",
+    "CHANGELOG.md",
     "README.md",
+    "RELEASE_NOTES.md",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "smoke": "npm run build && node dist/cli.js --help"
+    "smoke": "npm run build && node dist/cli.js --help",
+    "package:smoke": "npm pack --dry-run",
+    "release:check": "npm run check && npm test && npm run build && npm run smoke && npm run package:smoke"
   },
   "keywords": [
     "changelog",
