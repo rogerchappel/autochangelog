@@ -6,19 +6,7 @@
   "bin": {
     "autochangelog": "./dist/cli.js"
   },
-  "files": [
-    "dist",
-    "docs/README.md",
-    "docs/PRD.md",
-    "docs/TASKS.md",
-    "docs/ORCHESTRATION.md",
-    "docs/orchestration.json",
-    "fixtures/templates",
-    "CHANGELOG.md",
-    "README.md",
-    "RELEASE_NOTES.md",
-    "LICENSE"
-  ],
+  "files": "[\"dist\",\"docs/README.md\",\"docs/PRD.md\",\"docs/TASKS.md\",\"docs/ORCHESTRATION.md\",\"docs/orchestration.json\",\"fixtures\",\"CHANGELOG.md\",\"README.md\",\"RELEASE_NOTES.md\",\"LICENSE\"]",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
