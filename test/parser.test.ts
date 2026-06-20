@@ -5,7 +5,7 @@ import type { GitCommit } from "../src/types.js";
 
 describe("parseGitLog", () => {
   it("parses git log records with commit body content", () => {
-    const log = readFileSync("fixtures/git-log/simple.log", "utf8");
+    const log = readFileSync("fixtures/git-log/simple.fixture", "utf8");
     const commits = parseGitLog(log);
 
     expect(commits).toHaveLength(2);
@@ -50,7 +50,7 @@ describe("parseConventionalCommit", () => {
   });
 
   it("parses fixture commits into conventional commits", () => {
-    const commits = parseConventionalCommits(parseGitLog(readFileSync("fixtures/git-log/simple.log", "utf8")));
+    const commits = parseConventionalCommits(parseGitLog(readFileSync("fixtures/git-log/simple.fixture", "utf8")));
 
     expect(commits.map((commit) => commit.type)).toEqual(["feat", "fix"]);
     expect(commits[1].scopes).toEqual(["ui", "docs"]);
