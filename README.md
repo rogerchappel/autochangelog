@@ -84,6 +84,9 @@ Run the release check before opening a pull request:
 npm run release:check
 ```
 
+The package smoke builds the CLI and verifies that the publish tarball contains
+the compiled `dist/cli.js` and library entrypoint instead of TypeScript sources.
+
 ## Documentation
 
 - [Product requirements](docs/PRD.md)
