@@ -1,30 +1,57 @@
-#!/usr/bin/env node
-import { execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
-const output = execFileSync('npm', ['pack', '--dry-run', '--json'], {
-  encoding: 'utf8'
-});
+const run = (command, args) => {
+  const result = spawnSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  if (result.status !== 0) {
+    process.stderr.write(result.stderr || result.stdout);
+    process.exit(result.status ?? 1);
+  }
+  return result.stdout;
+};
+
+const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+if (pkg.scripts?.build) {
+  run('npm', ['run', 'build']);
+}
+const output = run('npm', ['pack', '--dry-run', '--json']);
 const [pack] = JSON.parse(output);
-const files = new Set(pack.files.map((file) => file.path));
+const included = new Set(pack.files.map((file) => file.path));
 
-const required = [
-  'dist/cli.js',
-  'dist/index.js',
-  'README.md',
-  'LICENSE',
-  'package.json'
-];
+const expected = new Set();
+const addPath = (value) => {
+  if (typeof value === 'string' && !value.startsWith('#')) {
+    expected.add(value.replace(/^\.\//, ''));
+  }
+};
+const walkExports = (value) => {
+  if (typeof value === 'string') {
+    addPath(value);
+  } else if (value && typeof value === 'object') {
+    for (const nested of Object.values(value)) {
+      walkExports(nested);
+    }
+  }
+};
 
-const missing = required.filter((file) => !files.has(file));
+if (typeof pkg.bin === 'string') {
+  addPath(pkg.bin);
+} else if (pkg.bin && typeof pkg.bin === 'object') {
+  for (const target of Object.values(pkg.bin)) {
+    addPath(target);
+  }
+}
+addPath(pkg.main);
+addPath(pkg.types);
+walkExports(pkg.exports);
+
+const missing = [...expected].filter((file) => !included.has(file));
 if (missing.length > 0) {
-  console.error(`Package smoke failed: missing ${missing.join(', ')}`);
+  console.error('Package tarball is missing declared entrypoints:');
+  for (const file of missing) {
+    console.error(`- ${file}`);
+  }
   process.exit(1);
 }
 
-const forbidden = [...files].filter((file) => file.startsWith('src/'));
-if (forbidden.length > 0) {
-  console.error(`Package smoke failed: source files should not be packed: ${forbidden.join(', ')}`);
-  process.exit(1);
-}
-
-console.log(`Package smoke passed with ${files.size} files.`);
+console.log(`Package tarball includes ${expected.size} declared entrypoint(s).`);

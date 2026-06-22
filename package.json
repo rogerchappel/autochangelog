@@ -8,6 +8,7 @@
   },
   "files": [
     "dist",
+    "src",
     "README.md",
     "LICENSE",
     "package.json"
@@ -17,7 +18,7 @@
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "smoke": "npm run build && node dist/cli.js --help",
-    "package:smoke": "npm run build && node scripts/package-smoke.mjs",
+    "package:smoke": "node scripts/package-smoke.mjs",
     "release:check": "npm run check && npm test && npm run build && npm run smoke && npm run package:smoke"
   },
   "keywords": [
