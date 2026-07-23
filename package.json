@@ -17,9 +17,10 @@
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
+    "audit": "npm audit --audit-level=low",
     "smoke": "npm run build && node dist/cli.js --help",
     "package:smoke": "node scripts/package-smoke.mjs",
-    "release:check": "npm run check && npm test && npm run build && npm run smoke && npm run package:smoke",
+    "release:check": "npm run audit && npm run check && npm test && npm run build && npm run smoke && npm run package:smoke",
     "lint": "npm run check"
   },
   "keywords": [
@@ -48,6 +49,6 @@
     "@types/node": "^24.10.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.14"
+    "vitest": "^4.1.10"
   }
 }
