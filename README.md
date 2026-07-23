@@ -24,6 +24,9 @@ npm install
 npm run build
 ```
 
+Development requires Node.js 20.19 or newer because the Vitest toolchain uses
+Vite 8. The published CLI continues to support Node.js 20 and newer.
+
 ## Use
 
 Generate a changelog for the current repository:
