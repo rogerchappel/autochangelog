@@ -23,7 +23,8 @@
     "audit": "npm audit --audit-level=low",
     "smoke": "npm run build && node dist/cli.js --help",
     "package:smoke": "node scripts/package-smoke.mjs",
-    "release:check": "npm run audit && npm run check && npm test && npm run build && npm run smoke && npm run package:smoke",
+    "package:identity": "node scripts/check-package-identity.mjs",
+    "release:check": "npm run audit && npm run package:identity && npm run check && npm test && npm run build && npm run smoke && npm run package:smoke",
     "lint": "npm run check"
   },
   "keywords": [
