@@ -1,8 +1,14 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
-const run = (command, args) => {
-  const result = spawnSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+const run = (command, args, options = {}) => {
+  const result = spawnSync(command, args, {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    ...options,
+  });
   if (result.status !== 0) {
     process.stderr.write(result.stderr || result.stdout);
     process.exit(result.status ?? 1);
@@ -54,4 +60,32 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-console.log(`Package tarball includes ${expected.size} declared entrypoint(s).`);
+const installDirectory = mkdtempSync(join(tmpdir(), 'autochangelog-package-smoke-'));
+try {
+  const packOutput = run('npm', ['pack', '--json', '--pack-destination', installDirectory]);
+  const [packed] = JSON.parse(packOutput);
+  const tarball = join(installDirectory, packed.filename);
+
+  run(
+    'npm',
+    ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--prefix', installDirectory, tarball],
+    { cwd: installDirectory },
+  );
+
+  const executable = join(
+    installDirectory,
+    'node_modules',
+    '.bin',
+    process.platform === 'win32' ? 'autochangelog.cmd' : 'autochangelog',
+  );
+  const help = run(executable, ['--help'], { cwd: installDirectory });
+  if (!help.includes('Usage: autochangelog')) {
+    throw new Error('Installed autochangelog CLI did not return the expected help output.');
+  }
+} finally {
+  rmSync(installDirectory, { recursive: true, force: true });
+}
+
+console.log(
+  `Package tarball includes ${expected.size} declared entrypoint(s), installs, and runs autochangelog.`,
+);
