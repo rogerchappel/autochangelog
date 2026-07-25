@@ -14,7 +14,7 @@ summaries, but it does not publish releases or rewrite git history.
 ## Install
 
 ```sh
-npm install --save-dev autochangelog
+npm install --save-dev @rogerchappel/autochangelog
 ```
 
 For local development in this repository:
@@ -32,31 +32,31 @@ Vite 8. The published CLI continues to support Node.js 20 and newer.
 Generate a changelog for the current repository:
 
 ```sh
-npx autochangelog
+npx --package @rogerchappel/autochangelog autochangelog
 ```
 
 Generate JSON between two refs:
 
 ```sh
-npx autochangelog --from v1.2.0 --to HEAD --format json
+npx --package @rogerchappel/autochangelog autochangelog --from v1.2.0 --to HEAD --format json
 ```
 
 Use the latest tag as the starting point:
 
 ```sh
-npx autochangelog --since-last-tag
+npx --package @rogerchappel/autochangelog autochangelog --since-last-tag
 ```
 
 Limit the git log to a path:
 
 ```sh
-npx autochangelog --scope packages/api
+npx --package @rogerchappel/autochangelog autochangelog --scope packages/api
 ```
 
 Render through a template:
 
 ```sh
-npx autochangelog --template fixtures/templates/release.md
+npx --package @rogerchappel/autochangelog autochangelog --template fixtures/templates/release.md
 ```
 
 ## Supported Commits
@@ -87,8 +87,10 @@ Run the release check before opening a pull request:
 npm run release:check
 ```
 
-The package smoke builds the CLI and verifies that the publish tarball contains
-the compiled `dist/cli.js` and library entrypoint instead of TypeScript sources.
+The release check confirms that the scoped npm identity is available or belongs
+to this repository. Its package smoke then builds and packs the CLI, installs
+the tarball in a temporary project, and invokes the documented `autochangelog`
+command.
 
 ## Documentation
 

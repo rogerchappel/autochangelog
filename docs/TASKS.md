@@ -4,7 +4,7 @@
 - [x] Write PRD.md
 
 ## Phase 1: Package Setup
-- [x] Set up package.json: name=autochangelog, type=module
+- [x] Set up package.json: name=@rogerchappel/autochangelog, type=module
 - [x] Configure tsconfig.json
 - [x] Create src/cli.ts, src/parser.ts, src/grouper.ts, src/reporter.ts, src/semver.ts
 - [x] Set up vitest config
