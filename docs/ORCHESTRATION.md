@@ -25,4 +25,5 @@ and release workflows.
 npm run release:check
 ```
 
-The release gate runs typecheck, tests, build, smoke, and package dry-run.
+The release gate checks the npm registry identity, runs typecheck and tests,
+builds the CLI, and installs the packed tarball before invoking its binary.

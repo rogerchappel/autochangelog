@@ -2,7 +2,7 @@
 
 ## 0.1.0
 
-Initial public build of `autochangelog`.
+Initial public build of `@rogerchappel/autochangelog`.
 
 ### Added
 
@@ -14,6 +14,7 @@ Initial public build of `autochangelog`.
 - `--from`, `--to`, `--since-last-tag`, `--scope`, `--template`, `--format`,
   and `--prerelease` CLI flags.
 - Fixture-backed parser, grouping, reporter, semver, and CLI tests.
+- Release checks for the scoped npm identity and the installed package binary.
 
 ### Notes
 
