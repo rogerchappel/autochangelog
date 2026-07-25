@@ -1,10 +1,13 @@
 {
-  "name": "autochangelog",
+  "name": "@rogerchappel/autochangelog",
   "version": "0.1.0",
   "description": "Local-first TypeScript CLI that generates changelogs from conventional commits.",
   "type": "module",
   "bin": {
     "autochangelog": "./dist/cli.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "dist",
