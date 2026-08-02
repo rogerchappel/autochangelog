@@ -24,7 +24,8 @@
     "smoke": "npm run build && node dist/cli.js --help",
     "package:smoke": "node scripts/package-smoke.mjs",
     "package:identity": "node scripts/check-package-identity.mjs",
-    "release:check": "npm run audit && npm run package:identity && npm run check && npm test && npm run build && npm run smoke && npm run package:smoke",
+    "readme:install": "node scripts/check-readme-installation.mjs",
+    "release:check": "npm run audit && npm run package:identity && npm run readme:install && npm run check && npm test && npm run build && npm run smoke && npm run package:smoke",
     "lint": "npm run check"
   },
   "keywords": [
