@@ -68,24 +68,38 @@ try {
 
   run(
     'npm',
-    ['install', '--ignore-scripts', '--no-audit', '--no-fund', '--prefix', installDirectory, tarball],
+    [
+      'install',
+      '--save-dev',
+      '--ignore-scripts',
+      '--no-audit',
+      '--no-fund',
+      '--prefix',
+      installDirectory,
+      tarball,
+    ],
     { cwd: installDirectory },
   );
 
-  const executable = join(
-    installDirectory,
-    'node_modules',
-    '.bin',
-    process.platform === 'win32' ? 'autochangelog.cmd' : 'autochangelog',
-  );
-  const help = run(executable, ['--help'], { cwd: installDirectory });
+  const documentedCommand = ['--no-install', 'autochangelog'];
+  const help = run('npx', [...documentedCommand, '--help'], { cwd: installDirectory });
   if (!help.includes('Usage: autochangelog')) {
     throw new Error('Installed autochangelog CLI did not return the expected help output.');
+  }
+
+  run('git', ['init', '--initial-branch=main'], { cwd: installDirectory });
+  run('git', ['config', 'user.name', 'Package Smoke'], { cwd: installDirectory });
+  run('git', ['config', 'user.email', 'package-smoke@example.invalid'], { cwd: installDirectory });
+  run('git', ['add', 'package.json', 'package-lock.json'], { cwd: installDirectory });
+  run('git', ['commit', '-m', 'feat: initialize consumer'], { cwd: installDirectory });
+  const changelog = run('npx', documentedCommand, { cwd: installDirectory });
+  if (!changelog.includes('initialize consumer')) {
+    throw new Error('Installed autochangelog CLI did not generate a changelog from consumer history.');
   }
 } finally {
   rmSync(installDirectory, { recursive: true, force: true });
 }
 
 console.log(
-  `Package tarball includes ${expected.size} declared entrypoint(s), installs, and runs autochangelog.`,
+  `Package tarball includes ${expected.size} declared entrypoint(s), installs, and runs documented help and changelog commands.`,
 );

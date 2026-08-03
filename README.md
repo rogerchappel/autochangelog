@@ -13,15 +13,23 @@ summaries, but it does not publish releases or rewrite git history.
 
 ## Install
 
+The package has not been published to npm yet. Until the first release, build a
+tarball from a source checkout:
+
 ```sh
-npm install --save-dev @rogerchappel/autochangelog
+git clone https://github.com/rogerchappel/autochangelog.git
+cd autochangelog
+npm ci
+npm run build
+mkdir -p artifacts
+npm pack --pack-destination artifacts
 ```
 
-For local development in this repository:
+Then install that tarball in the project where you want to generate a
+changelog (replace the checkout path if necessary):
 
 ```sh
-npm install
-npm run build
+npm install --save-dev /path/to/autochangelog/artifacts/rogerchappel-autochangelog-0.1.0.tgz
 ```
 
 Development requires Node.js 20.19 or newer because the Vitest toolchain uses
@@ -32,31 +40,31 @@ Vite 8. The published CLI continues to support Node.js 20 and newer.
 Generate a changelog for the current repository:
 
 ```sh
-npx --package @rogerchappel/autochangelog autochangelog
+npx --no-install autochangelog
 ```
 
 Generate JSON between two refs:
 
 ```sh
-npx --package @rogerchappel/autochangelog autochangelog --from v1.2.0 --to HEAD --format json
+npx --no-install autochangelog --from v1.2.0 --to HEAD --format json
 ```
 
 Use the latest tag as the starting point:
 
 ```sh
-npx --package @rogerchappel/autochangelog autochangelog --since-last-tag
+npx --no-install autochangelog --since-last-tag
 ```
 
 Limit the git log to a path:
 
 ```sh
-npx --package @rogerchappel/autochangelog autochangelog --scope packages/api
+npx --no-install autochangelog --scope packages/api
 ```
 
 Render through a template:
 
 ```sh
-npx --package @rogerchappel/autochangelog autochangelog --template fixtures/templates/release.md
+npx --no-install autochangelog --template fixtures/templates/release.md
 ```
 
 ## Supported Commits
@@ -88,9 +96,9 @@ npm run release:check
 ```
 
 The release check confirms that the scoped npm identity is available or belongs
-to this repository. Its package smoke then builds and packs the CLI, installs
-the tarball in a temporary project, and invokes the documented `autochangelog`
-command.
+to this repository and that the install instructions match its publication
+state. Its package smoke then builds and packs the CLI, installs the tarball in
+a temporary project, and invokes the documented help and changelog commands.
 
 ## Documentation
 
