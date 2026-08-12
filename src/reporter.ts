@@ -53,7 +53,7 @@ export function renderMarkdown(summary: ChangelogSummary): string {
     for (const commit of breaking) {
       lines.push(formatCommit(commit));
       for (const note of commit.breakingNotes) {
-        lines.push(`  - ${note}`);
+        lines.push(`  - ${note.replaceAll("\n", "\n    ")}`);
       }
     }
     lines.push("");

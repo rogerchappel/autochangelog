@@ -12,6 +12,15 @@ describe("renderMarkdown", () => {
     expect(markdown).toContain("## Features");
     expect(markdown).toContain("Ada Lovelace <ada@example.com>");
   });
+
+  it("preserves multi-paragraph breaking notes in Markdown", () => {
+    const input = commit();
+    input.breakingNotes = ["use OAuth tokens\n\nMigrate clients before upgrading"];
+
+    expect(renderMarkdown(buildSummary([input]))).toContain(
+      "  - use OAuth tokens\n    \n    Migrate clients before upgrading"
+    );
+  });
 });
 
 describe("renderSummary", () => {
@@ -19,6 +28,15 @@ describe("renderSummary", () => {
     const output = renderSummary(buildSummary([commit()]), { format: "json" });
 
     expect(JSON.parse(output)).toMatchObject({ suggestedBump: "major" });
+  });
+
+  it("preserves multi-paragraph breaking notes in json output", () => {
+    const input = commit();
+    input.breakingNotes = ["use OAuth tokens\n\nMigrate clients before upgrading"];
+
+    const output = renderSummary(buildSummary([input]), { format: "json" });
+
+    expect(JSON.parse(output).commits[0].breakingNotes).toEqual(input.breakingNotes);
   });
 
   it("renders custom templates", () => {
