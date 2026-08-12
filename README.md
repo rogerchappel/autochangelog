@@ -77,8 +77,10 @@ fix(ui): prevent empty state flicker
 feat(api,ui)!: remove legacy session shape
 ```
 
-It also detects `BREAKING CHANGE:` and `BREAKING-CHANGE:` notes in commit
-bodies.
+It also detects `BREAKING CHANGE:` and `BREAKING-CHANGE:` footer notes. A note
+may span multiple lines or paragraphs; it continues until the next conventional
+commit footer token (for example, `Refs: #42` or `Reviewed-by: Ada Lovelace`).
+Multiple breaking-change notes are preserved in their original order.
 
 ## Output
 
