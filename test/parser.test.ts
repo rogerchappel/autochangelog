@@ -37,6 +37,49 @@ describe("parseConventionalCommit", () => {
     });
   });
 
+  it("preserves multi-paragraph breaking notes up to the next footer", () => {
+    const commit = parseConventionalCommit({
+      hash: "abc1234",
+      authorName: "Ada Lovelace",
+      authorEmail: "ada@example.com",
+      date: "2026-05-26T09:00:00+10:00",
+      message: [
+        "feat(api): replace authentication",
+        "",
+        "BREAKING CHANGE: use OAuth tokens.",
+        "",
+        "Existing API keys stop working.",
+        "Migrate clients before upgrading.",
+        "",
+        "Refs: #42"
+      ].join("\n")
+    });
+
+    expect(commit?.breakingNotes).toEqual([
+      "use OAuth tokens.\n\nExisting API keys stop working.\nMigrate clients before upgrading."
+    ]);
+  });
+
+  it("extracts multiple breaking note markers deterministically", () => {
+    const commit = parseConventionalCommit({
+      hash: "abc1234",
+      authorName: "Ada Lovelace",
+      authorEmail: "ada@example.com",
+      date: "2026-05-26T09:00:00+10:00",
+      message: [
+        "feat(api): replace authentication",
+        "",
+        "BREAKING CHANGE: remove API keys",
+        "",
+        "BREAKING-CHANGE: rename the token field",
+        "continuation details",
+        "Reviewed-by: Grace Hopper"
+      ].join("\n")
+    });
+
+    expect(commit?.breakingNotes).toEqual(["remove API keys", "rename the token field\ncontinuation details"]);
+  });
+
   it("ignores non-conventional commits", () => {
     const commit: GitCommit = {
       hash: "abc",

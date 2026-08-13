@@ -114,13 +114,27 @@ function extractBreakingNotes(body: string): string[] {
     return [];
   }
 
+  const lines = body.split("\n");
   const notes: string[] = [];
-  const pattern = /^BREAKING[ -]CHANGE:\s*(.+(?:\n(?![A-Z][A-Z -]+:).+)*)/gm;
-  let match: RegExpExecArray | null;
 
-  while ((match = pattern.exec(body)) !== null) {
-    notes.push(match[1].trim());
+  for (let index = 0; index < lines.length; index += 1) {
+    const marker = /^BREAKING[ -]CHANGE:\s*(.*)$/.exec(lines[index]);
+    if (!marker) {
+      continue;
+    }
+
+    const note = [marker[1]];
+    while (index + 1 < lines.length && !isFooter(lines[index + 1])) {
+      note.push(lines[index + 1]);
+      index += 1;
+    }
+
+    notes.push(note.join("\n").trim());
   }
 
   return notes;
+}
+
+function isFooter(line: string): boolean {
+  return /^(?:BREAKING[ -]CHANGE|[A-Za-z][A-Za-z0-9-]*)(?::\s*| #)/.test(line);
 }
