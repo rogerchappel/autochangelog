@@ -89,6 +89,11 @@ Multiple breaking-change notes are preserved in their original order.
 - Template rendering with simple placeholders such as `{{changes}}`,
   `{{contributors}}`, `{{suggestedBump}}`, and `{{json}}`.
 
+Markdown output escapes punctuation in commit scopes, subjects, breaking-change
+notes, and contributor identities so those git-derived values display literally
+instead of becoming links, emphasis, headings, HTML-like tags, or extra list
+items. JSON output retains the original strings without Markdown escaping.
+
 ## Verify
 
 Run the release check before opening a pull request:
