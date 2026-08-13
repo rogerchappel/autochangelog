@@ -53,7 +53,7 @@ export function renderMarkdown(summary: ChangelogSummary): string {
     for (const commit of breaking) {
       lines.push(formatCommit(commit));
       for (const note of commit.breakingNotes) {
-        lines.push(`  - ${note.replaceAll("\n", "\n    ")}`);
+        lines.push(`  - ${escapeMarkdownText(note).replaceAll("\n", "\n    ")}`);
       }
     }
     lines.push("");
@@ -63,7 +63,7 @@ export function renderMarkdown(summary: ChangelogSummary): string {
     lines.push(`## ${sectionTitles.get(group.type) ?? titleCase(group.type)}`, "");
 
     for (const scope of group.scopes) {
-      lines.push(`### ${scope.scope}`, "");
+      lines.push(`### ${escapeMarkdownText(scope.scope)}`, "");
       for (const commit of scope.commits) {
         lines.push(formatCommit(commit));
       }
@@ -73,7 +73,9 @@ export function renderMarkdown(summary: ChangelogSummary): string {
 
   lines.push("## Contributors", "");
   for (const contributor of summary.contributors) {
-    lines.push(`- ${contributor.name} <${contributor.email}> (${contributor.commits})`);
+    lines.push(
+      `- ${escapeMarkdownText(contributor.name)} \\<${escapeMarkdownText(contributor.email)}\\> (${contributor.commits})`
+    );
   }
   lines.push("");
 
@@ -92,9 +94,13 @@ function renderTemplate(summary: ChangelogSummary, templatePath: string): string
 }
 
 function formatCommit(commit: ParsedCommit): string {
-  const scope = commit.scopes.length > 0 ? `**${commit.scopes.join(", ")}:** ` : "";
+  const scope = commit.scopes.length > 0 ? `**${commit.scopes.map(escapeMarkdownText).join(", ")}:** ` : "";
   const marker = commit.breaking ? " **BREAKING**" : "";
-  return `- ${scope}${commit.subject} (${commit.hash.slice(0, 7)})${marker}`;
+  return `- ${scope}${escapeMarkdownText(commit.subject)} (${commit.hash.slice(0, 7)})${marker}`;
+}
+
+function escapeMarkdownText(value: string): string {
+  return value.replace(/[\\`*_[\]{}()#+\-.!|<>]/g, "\\$&");
 }
 
 function titleCase(value: string): string {

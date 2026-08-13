@@ -10,7 +10,7 @@ describe("renderMarkdown", () => {
     expect(markdown).toContain("Suggested bump: major");
     expect(markdown).toContain("## Breaking Changes");
     expect(markdown).toContain("## Features");
-    expect(markdown).toContain("Ada Lovelace <ada@example.com>");
+    expect(markdown).toContain("Ada Lovelace \\<ada@example\\.com\\>");
   });
 
   it("preserves multi-paragraph breaking notes in Markdown", () => {
@@ -19,6 +19,35 @@ describe("renderMarkdown", () => {
 
     expect(renderMarkdown(buildSummary([input]))).toContain(
       "  - use OAuth tokens\n    \n    Migrate clients before upgrading"
+    );
+  });
+
+  it("renders git-derived metacharacters as literal Markdown text", () => {
+    const input = commit();
+    input.scopes = ["api | [docs](https://example.invalid) **bold** `code` <tag>"];
+    input.subject = "close ](https://example.invalid) *carefully* with `ticks` <script>";
+    input.authorName = "Eve | [Ops](https://example.invalid) **Lead** `root` <admin>";
+    input.authorEmail = "eve+alerts@example.test";
+
+    const markdown = renderMarkdown(buildSummary([input]));
+
+    expect(markdown).toContain(
+      "### api \\| \\[docs\\]\\(https://example\\.invalid\\) \\*\\*bold\\*\\* \\`code\\` \\<tag\\>"
+    );
+    expect(markdown).toContain(
+      "close \\]\\(https://example\\.invalid\\) \\*carefully\\* with \\`ticks\\` \\<script\\>"
+    );
+    expect(markdown).toContain(
+      "Eve \\| \\[Ops\\]\\(https://example\\.invalid\\) \\*\\*Lead\\*\\* \\`root\\` \\<admin\\>"
+    );
+  });
+
+  it("keeps multiline breaking notes inside their list item", () => {
+    const input = commit();
+    input.breakingNotes = ["first | line\n# not a heading\n- not another item\n<tag> **bold**"];
+
+    expect(renderMarkdown(buildSummary([input]))).toContain(
+      "  - first \\| line\n    \\# not a heading\n    \\- not another item\n    \\<tag\\> \\*\\*bold\\*\\*"
     );
   });
 });
@@ -37,6 +66,21 @@ describe("renderSummary", () => {
     const output = renderSummary(buildSummary([input]), { format: "json" });
 
     expect(JSON.parse(output).commits[0].breakingNotes).toEqual(input.breakingNotes);
+  });
+
+  it("leaves metacharacters unchanged in json output", () => {
+    const input = commit();
+    input.scopes = ["api | [docs](url) **bold** `code` <tag>"];
+    input.subject = "ship *literal* Markdown";
+    input.authorName = "Eve <Ops>";
+
+    const output = renderSummary(buildSummary([input]), { format: "json" });
+
+    expect(JSON.parse(output).commits[0]).toMatchObject({
+      scopes: input.scopes,
+      subject: input.subject,
+      authorName: input.authorName
+    });
   });
 
   it("renders custom templates", () => {
