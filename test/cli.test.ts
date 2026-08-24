@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -44,9 +44,32 @@ describe("autochangelog CLI", () => {
 
     expect(JSON.parse(json).commits).toHaveLength(1);
   });
+
+  it("fails clearly when --since-last-tag is used in a tagless repository", () => {
+    const repo = createRepo(false);
+    const result = spawnSync("node", [join(process.cwd(), "src/cli.ts"), "--since-last-tag"], {
+      cwd: repo,
+      encoding: "utf8",
+      env: { ...process.env, NODE_OPTIONS: `--import=${tsxLoader}` }
+    });
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("no git tags found for --since-last-tag");
+  });
+
+  it("uses the latest tag and honors an explicit --from with --since-last-tag", () => {
+    const repo = createRepo();
+    const latestTag = runJson(repo, "--since-last-tag");
+    const explicitFrom = runJson(repo, "--since-last-tag", "--from", "v0.1.0");
+
+    expect(latestTag.from).toBe("v0.1.0");
+    expect(latestTag.commits).toHaveLength(2);
+    expect(explicitFrom.from).toBe("v0.1.0");
+    expect(explicitFrom.commits).toHaveLength(2);
+  });
 });
 
-function createRepo(): string {
+function createRepo(withTag = true): string {
   const repo = mkdtempSync(join(tmpdir(), "autochangelog-"));
   tmpRepos.push(repo);
 
@@ -57,7 +80,9 @@ function createRepo(): string {
   writeFileSync(join(repo, "README.md"), "# Fixture\n");
   git(repo, "add", "README.md");
   git(repo, "commit", "-m", "chore: initial commit");
-  git(repo, "tag", "v0.1.0");
+  if (withTag) {
+    git(repo, "tag", "v0.1.0");
+  }
 
   writeFileSync(join(repo, "index.ts"), "export const parser = true;\n");
   git(repo, "add", "index.ts");
@@ -69,6 +94,15 @@ function createRepo(): string {
   git(repo, "commit", "-m", "docs: add usage guide");
 
   return repo;
+}
+
+function runJson(repo: string, ...args: string[]): Record<string, any> {
+  const output = execFileSync("node", [join(process.cwd(), "src/cli.ts"), ...args, "--format", "json"], {
+    cwd: repo,
+    encoding: "utf8",
+    env: { ...process.env, NODE_OPTIONS: `--import=${tsxLoader}` }
+  });
+  return JSON.parse(output);
 }
 
 function git(cwd: string, ...args: string[]): void {
