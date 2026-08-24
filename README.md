@@ -55,6 +55,11 @@ Use the latest tag as the starting point:
 npx --no-install autochangelog --since-last-tag
 ```
 
+This option exits with a diagnostic when the repository has no tags, instead
+of treating the entire history as release notes. Create a tag first or provide
+an explicit starting ref with `--from`; an explicit `--from` takes precedence
+when combined with `--since-last-tag`.
+
 Limit the git log to a path:
 
 ```sh
