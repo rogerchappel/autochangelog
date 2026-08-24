@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -96,10 +96,21 @@ try {
   if (!changelog.includes('initialize consumer')) {
     throw new Error('Installed autochangelog CLI did not generate a changelog from consumer history.');
   }
+
+  const templatePath = join(installDirectory, 'release-template.md');
+  writeFileSync(templatePath, '# Release notes\n\nBump: {{suggestedBump}}\n\n{{changes}}\n');
+  const templatedChangelog = run(
+    'npx',
+    [...documentedCommand, '--template', 'release-template.md'],
+    { cwd: installDirectory },
+  );
+  if (!templatedChangelog.startsWith('# Release notes\n') || !templatedChangelog.includes('initialize consumer')) {
+    throw new Error('Installed autochangelog CLI did not render the documented consumer template.');
+  }
 } finally {
   rmSync(installDirectory, { recursive: true, force: true });
 }
 
 console.log(
-  `Package tarball includes ${expected.size} declared entrypoint(s), installs, and runs documented help and changelog commands.`,
+  `Package tarball includes ${expected.size} declared entrypoint(s), installs, and runs documented help, changelog, and template commands.`,
 );
