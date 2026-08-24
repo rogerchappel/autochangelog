@@ -64,8 +64,19 @@ npx --no-install autochangelog --scope packages/api
 Render through a template:
 
 ```sh
-npx --no-install autochangelog --template fixtures/templates/release.md
+cat > release-template.md <<'EOF'
+# Release notes
+
+Bump: {{suggestedBump}}
+
+{{changes}}
+EOF
+npx --no-install autochangelog --template release-template.md
 ```
+
+Template paths are resolved from the project where you run the CLI. The
+`fixtures/templates/release.md` example template belongs to the source checkout
+and is used by repository tests; it is not included in an installed package.
 
 ## Supported Commits
 
