@@ -34,6 +34,9 @@ export function getHeadRef(cwd = process.cwd()): string {
 export function readGitLog(options: GitLogOptions = {}): GitCommit[] {
   const cwd = options.cwd ?? process.cwd();
   const from = options.sinceLastTag ? options.from ?? getLastTag(cwd) : options.from;
+  if (options.sinceLastTag && !from) {
+    throw new Error("no git tags found for --since-last-tag; create a tag or provide --from <ref>");
+  }
   const to = options.to ?? "HEAD";
   const range = from ? `${from}..${to}` : to;
   const args = ["log", range, `--format=${recordSeparator}%H${fieldSeparator}%an${fieldSeparator}%ae${fieldSeparator}%aI${fieldSeparator}%B`];
