@@ -12,8 +12,12 @@ permissions:
 
 jobs:
   package:
-    name: Package
+    name: Package (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 24]
 
     steps:
       - name: Check out repository
@@ -22,7 +26,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.19
+          node-version: ${{ matrix.node-version }}
           cache: npm
 
       - name: Install dependencies
