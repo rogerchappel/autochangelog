@@ -33,7 +33,8 @@ npm install --save-dev /path/to/autochangelog/artifacts/rogerchappel-autochangel
 ```
 
 Development requires Node.js 20.19 or newer because the Vitest toolchain uses
-Vite 8. The published CLI continues to support Node.js 20 and newer.
+Vite 8. The CLI runtime supports Node.js 20 and newer, as declared by the
+package engine requirement (`node >=20`).
 
 ## Use
 
